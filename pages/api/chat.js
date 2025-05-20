@@ -1,3 +1,6 @@
+export const config = {
+  runtime: 'nodejs' // Désactive le mode Edge
+};
 import { HfInference } from '@huggingface/inference';
 
 const hf = new HfInference(process.env.HF_API_KEY);
