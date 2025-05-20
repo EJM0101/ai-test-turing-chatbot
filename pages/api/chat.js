@@ -9,7 +9,8 @@ const fakeReplies = [
 ];
 
 // Exemple de modèle simple et gratuit : google/flan-t5-small
-const HF_MODEL_URL = "https://api-inference.huggingface.co/models/google/flan-t5-small";
+//const HF_MODEL_URL = "https://api-inference.huggingface.co/models/google/flan-t5-small";
+const HF_MODEL_URL = "https://api-inference.huggingface.co/models/bigscience/bloom-560m";
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
