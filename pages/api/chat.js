@@ -34,6 +34,7 @@ export default async function handler(req, res) {
     reply = fakeReplies[index];
   } else if (role === 'gpt') {
     try {
+      console.log("OPENAI_API_KEY =", process.env.OPENAI_API_KEY ? 'OK' : 'ABSENTE');
       const completion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [
