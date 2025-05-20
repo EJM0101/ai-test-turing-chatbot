@@ -13,7 +13,8 @@ const fakeReplies = [
 ];
 
 // URL du modèle Hugging Face rapide
-const HF_MODEL_URL = "https://api-inference.huggingface.co/models/bigscience/bloom-560m";
+//const HF_MODEL_URL = "https://api-inference.huggingface.co/models/bigscience/bloom-560m";
+const HF_MODEL_URL = "https://api-inference.huggingface.co/models/gpt2";
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
