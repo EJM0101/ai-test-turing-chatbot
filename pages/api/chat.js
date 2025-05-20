@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+
 const fakeReplies = [
   "Bonne question ! Qu'en penses-tu, toi ?",
   "Je suis d'accord, c’est assez complexe à dire.",
@@ -30,16 +32,15 @@ export default async function handler(req, res) {
     reply = fakeReplies[index];
   } else if (role === 'gpt') {
     try {
+      console.log("Clé Hugging Face détectée ?", !!process.env.HF_API_KEY);
       const hfResponse = await fetch(HF_MODEL_URL, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.HF_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          inputs: message,
-        }),
-      });
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.HF_API_KEY}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ inputs: message }),
+});
 
       const hfData = await hfResponse.json();
       console.log("HF RESPONSE :", hfData);
@@ -51,10 +52,11 @@ export default async function handler(req, res) {
     reply = "[Erreur Hugging Face : modèle indisponible ou trop lent]";
   }
 }
+     } 
     } catch (error) {
-      console.error("Erreur Hugging Face:", error);
-      reply = "[Erreur réseau Hugging Face]";
-    }
+  console.error("Erreur Hugging Face:", error);
+  reply = `[Erreur réseau Hugging Face : ${error.message || error}]`;
+}
   }
 
   res.status(200).json({ reply });
