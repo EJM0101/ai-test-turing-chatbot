@@ -42,12 +42,13 @@ export default async function handler(req, res) {
 
       const hfData = await hfResponse.json();
 
-      if (hfData.error) {
-        console.error("Erreur Hugging Face :", hfData.error);
-        reply = "[Erreur Hugging Face : modèle indisponible ou trop lent]";
-      } else {
-        reply = hfData[0]?.generated_text || "[Pas de réponse générée]";
-      }
+      if (hfData.error || !hfData[0]) {
+  if (hfData.error?.includes("loading")) {
+    reply = "[Le modèle est en cours de chargement. Veuillez réessayer dans quelques secondes.]";
+  } else {
+    reply = "[Erreur Hugging Face : modèle indisponible ou trop lent]";
+  }
+}
     } catch (error) {
       console.error("Erreur Hugging Face:", error);
       reply = "[Erreur réseau Hugging Face]";
