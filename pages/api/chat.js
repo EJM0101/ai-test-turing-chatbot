@@ -29,21 +29,21 @@ export default async function handler(req, res) {
     reply = fakeReplies[index];
   } else if (role === 'gpt') {
     try {
-      const result = await hf.textGeneration({
-        model: 'gpt2', // tu peux changer ici pour un modèle plus grand
-        inputs: message,
-        parameters: {
-          max_new_tokens: 100,
-          temperature: 0.7,
-          return_full_text: false
-        }
-      });
-
-      reply = result.generated_text || "[Pas de réponse générée]";
-    } catch (error) {
-      console.error("Erreur Hugging Face:", error);
-      reply = `[Erreur Hugging Face : ${error.message || "échec réseau"}]`;
+  const result = await hf.textGeneration({
+    model: 'bigscience/bloom-560m',
+    inputs: message,
+    parameters: {
+      max_new_tokens: 100,
+      temperature: 0.7,
+      return_full_text: false
     }
+  });
+
+  reply = result?.generated_text || "[Pas de réponse générée]";
+} catch (error) {
+  console.error("Erreur Hugging Face:", error);
+  reply = `[Erreur Hugging Face : ${error.message || error.toString()}]`;
+}
   }
 
   res.status(200).json({ reply });
