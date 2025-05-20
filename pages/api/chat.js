@@ -60,5 +60,8 @@ export default async function handler(req, res) {
   }
 
   // Envoie la réponse au frontend
+  if (!reply) {
+  reply = "Erreur : aucune réponse générée.";
+ }
   res.status(200).json({ reply });
 }
