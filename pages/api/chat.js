@@ -1,13 +1,10 @@
-// Importation des modules nécessaires
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 
-// Initialisation de la configuration OpenAI via variable d’environnement
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
-// Faux humain : liste de réponses prédéfinies
+// Réponses fictives pour le faux humain
 const fakeReplies = [
   "Bonne question ! Qu'en penses-tu, toi ?",
   "Je suis d'accord, c’est assez complexe à dire.",
@@ -20,13 +17,11 @@ const fakeReplies = [
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    // Rejette les requêtes non POST
     return res.status(405).json({ error: 'Méthode non autorisée' });
   }
 
   const { message, role } = req.body;
 
-  // Vérifie si les champs sont valides
   if (!message || !role) {
     return res.status(400).json({ error: 'Message ou rôle manquant.' });
   }
@@ -34,13 +29,12 @@ export default async function handler(req, res) {
   let reply = '';
 
   if (role === 'fake') {
-    // Simule une réponse humaine en piochant une réponse aléatoire
+    // Faux humain
     const index = Math.floor(Math.random() * fakeReplies.length);
     reply = fakeReplies[index];
   } else if (role === 'gpt') {
     try {
-      // Appel à l’API OpenAI (modèle gpt-3.5-turbo)
-      const completion = await openai.createChatCompletion({
+      const completion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [
           { role: 'system', content: 'Tu es un assistant amical et intelligent.' },
@@ -50,7 +44,7 @@ export default async function handler(req, res) {
         temperature: 0.7,
       });
 
-      reply = completion.data.choices[0].message.content.trim();
+      reply = completion.choices[0].message.content.trim();
     } catch (error) {
       console.error('Erreur GPT :', error);
       return res.status(500).json({ error: 'Erreur serveur GPT' });
@@ -59,9 +53,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Rôle invalide.' });
   }
 
-  // Envoie la réponse au frontend
   if (!reply) {
-  reply = "Erreur : aucune réponse générée.";
- }
+    reply = 'Erreur : aucune réponse générée.';
+  }
+
   res.status(200).json({ reply });
 }
