@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import ChatBox from '../components/ChatBox';
 
@@ -28,32 +27,43 @@ export default function Home() {
 
   // Envoi du message utilisateur et réception des réponses des 2 bots
   const sendMessage = async () => {
-    if (!input.trim()) return;
+  if (!input.trim()) return;
 
-    const userMessage = { sender: 'User', text: input };
-    setMessages((prev) => [...prev, userMessage]);
-    setInput('');
-    setGuessMode(true); // Active le mode devinette
+  const userMessage = { sender: 'User', text: input };
+  setMessages((prev) => [...prev, userMessage]);
+  setInput('');
+  setGuessMode(true);
 
-    // Appelle les 2 rôles (IA + faux humain)
-    const responses = await Promise.all(
-      botRoles.map(async (role, i) => {
+  const responses = await Promise.all(
+    botRoles.map(async (role, i) => {
+      try {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: input, role }),
         });
-        const data = await res.json();
-        return {
-          sender: `Bot ${String.fromCharCode(65 + i)}`, // Bot A ou B
-          text: data.reply,
-        };
-      })
-    );
 
-    // Ajoute les réponses à l’historique
-    setMessages((prev) => [...prev, ...responses]);
-  };
+        const data = await res.json();
+
+        // Debug : log dans la console
+        console.log(`Bot ${String.fromCharCode(65 + i)} (${role}) =>`, data);
+
+        return {
+          sender: `Bot ${String.fromCharCode(65 + i)}`,
+          text: data.reply || "[Erreur : aucune réponse reçue]",
+        };
+      } catch (err) {
+        console.error(`Erreur avec le Bot ${role} :`, err);
+        return {
+          sender: `Bot ${String.fromCharCode(65 + i)}`,
+          text: "[Erreur lors de la récupération de la réponse]",
+        };
+      }
+    })
+  );
+
+  setMessages((prev) => [...prev, ...responses]);
+};
 
   // Quand l’utilisateur devine qui est l’IA (Bot A ou B)
   const handleGuess = (guess) => {
