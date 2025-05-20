@@ -41,6 +41,7 @@ export default async function handler(req, res) {
       });
 
       const hfData = await hfResponse.json();
+      console.log("HF RESPONSE :", hfData);
 
       if (hfData.error || !hfData[0]) {
   if (hfData.error?.includes("loading")) {
