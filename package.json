@@ -17,5 +17,8 @@
     "tailwindcss": "^3.4.1",
     "@huggingface/inference": "^2.8.1"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "engines": {
+  "node": "20.x"
+ }
 }
