@@ -33,7 +33,7 @@ export default async function handler(req, res) {
   } else if (role === 'gpt') {
     try {
   const result = await hf.textGeneration({
-    model: 'gpt2',
+    model: 'bigscience/bloom-560m',
     inputs: message,
     parameters: {
       max_new_tokens: 100,
